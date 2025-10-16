@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	pokeapiinteractions "github.com/alancorleto/pokedexcli/internal/poke_api_interactions"
 )
 
 type cliCommand struct {
@@ -31,6 +33,8 @@ func init() {
 }
 
 func main() {
+	pokeapiinteractions.PrintLocations()
+
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
@@ -58,6 +62,8 @@ func cleanInput(text string) []string {
 func processCommand(command string) {
 	if cmd, exists := commands[command]; exists {
 		cmd.callback()
+	} else {
+		fmt.Printf("Unknown command: %s. Type 'help' for a list of commands.\n", command)
 	}
 }
 
