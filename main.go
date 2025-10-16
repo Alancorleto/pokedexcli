@@ -13,6 +13,12 @@ type cliCommand struct {
 	name        string
 	description string
 	callback    func() error
+	config      *config
+}
+
+type config struct {
+	Next     string
+	Previous string
 }
 
 var commands map[string]cliCommand
@@ -23,18 +29,30 @@ func init() {
 			name:        "exit",
 			description: "Exit the Pokedex",
 			callback:    commandExit,
+			config:      &config{},
 		},
 		"help": {
 			name:        "help",
 			description: "Show help message",
 			callback:    commandHelp,
+			config:      &config{},
+		},
+		"map": {
+			name:        "map",
+			description: "Show locations",
+			callback:    pokeapiinteractions.Map,
+			config:      &config{},
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Show previous locations",
+			callback:    pokeapiinteractions.Mapb,
+			config:      &config{},
 		},
 	}
 }
 
 func main() {
-	pokeapiinteractions.PrintLocations()
-
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")

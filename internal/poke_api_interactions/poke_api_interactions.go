@@ -7,40 +7,18 @@ import (
 	"net/http"
 )
 
-type LocationsResponse struct {
-	Count    int        `json:"count"`
-	Next     string     `json:"next"`
-	Previous any        `json:"previous"`
-	Results  []Location `json:"results"`
-}
-
-type Location struct {
-	Name string `json:"name"`
-	URL  string `json:"url"`
-}
-
-func PrintLocations() {
-	url := "https://pokeapi.co/api/v2/location/"
+func Get[T any](url string) (*T, error) {
 	data, err := MakeGetRequest(url)
 	if err != nil {
-		fmt.Println("Error making GET request:", err)
-		return
+		return nil, err
 	}
 
-	locations, err := DecodeResponseAsLocations(data)
+	result, err := DecodeHttpResponse[T](data)
 	if err != nil {
-		fmt.Println("Error decoding JSON response:", err)
-		return
+		return nil, err
 	}
 
-	limit := 20
-	if len(locations.Results) < limit {
-		limit = len(locations.Results)
-	}
-
-	for i := 0; i < limit; i++ {
-		fmt.Printf("%s\n", locations.Results[i].Name)
-	}
+	return result, nil
 }
 
 func MakeGetRequest(url string) ([]byte, error) {
@@ -61,11 +39,11 @@ func MakeGetRequest(url string) ([]byte, error) {
 	return body, nil
 }
 
-func DecodeResponseAsLocations(data []byte) (*LocationsResponse, error) {
-	var locations LocationsResponse
-	err := json.Unmarshal(data, &locations)
+func DecodeHttpResponse[T any](data []byte) (*T, error) {
+	var response T
+	err := json.Unmarshal(data, &response)
 	if err != nil {
 		return nil, err
 	}
-	return &locations, nil
+	return &response, nil
 }
