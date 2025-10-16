@@ -46,6 +46,16 @@ func init() {
 			description: "List the names of pokemon found at a specific location",
 			callback:    commandExplore,
 		},
+		"catch": {
+			name:        "catch",
+			description: "Catch a pokemon by name",
+			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "Inspect a caught pokemon by name",
+			callback:    commandInspect,
+		},
 	}
 }
 
@@ -110,4 +120,12 @@ func commandMapb(args ...string) error {
 
 func commandExplore(args ...string) error {
 	return pokeapiinteractions.Explore(args[0])
+}
+
+func commandCatch(args ...string) error {
+	return pokeapiinteractions.Catch(args[0])
+}
+
+func commandInspect(args ...string) error {
+	return pokeapiinteractions.Inspect(args[0])
 }
