@@ -2,6 +2,7 @@ package pokeapiinteractions
 
 import (
 	"fmt"
+	"math/rand"
 )
 
 type PokemonResponse struct {
@@ -34,7 +35,14 @@ func Catch(pokemonName string) error {
 		return err
 	}
 
-	fmt.Printf("You caught a %s!\n", pokemon.Name)
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon.Name)
+
+	if rand.Intn(2) == 0 {
+		fmt.Printf("Oh no! %s escaped!\n", pokemon.Name)
+		return nil
+	}
+
+	fmt.Printf("Congratulations! You caught a %s!\n", pokemon.Name)
 
 	pokedex[pokemon.Name] = *pokemon
 
