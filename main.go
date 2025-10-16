@@ -14,13 +14,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
-	config      *config
-}
-
-type config struct {
-	Next     string
-	Previous string
+	callback    func(...string) error
 }
 
 var commands map[string]cliCommand
@@ -31,25 +25,26 @@ func init() {
 			name:        "exit",
 			description: "Exit the Pokedex",
 			callback:    commandExit,
-			config:      &config{},
 		},
 		"help": {
 			name:        "help",
 			description: "Show help message",
 			callback:    commandHelp,
-			config:      &config{},
 		},
 		"map": {
 			name:        "map",
 			description: "Show locations",
-			callback:    pokeapiinteractions.Map,
-			config:      &config{},
+			callback:    commandMap,
 		},
 		"mapb": {
 			name:        "mapb",
 			description: "Show previous locations",
-			callback:    pokeapiinteractions.Mapb,
-			config:      &config{},
+			callback:    commandMapb,
+		},
+		"explore": {
+			name:        "explore",
+			description: "List the names of pokemon found at a specific location",
+			callback:    commandExplore,
 		},
 	}
 }
@@ -64,7 +59,7 @@ func main() {
 		input := scanner.Text()
 		words := cleanInput(input)
 		if len(words) > 0 {
-			processCommand(words[0])
+			processCommand(words[0], words[1:]...)
 		}
 	}
 }
@@ -81,21 +76,21 @@ func cleanInput(text string) []string {
 	return words
 }
 
-func processCommand(command string) {
+func processCommand(command string, args ...string) {
 	if cmd, exists := commands[command]; exists {
-		cmd.callback()
+		cmd.callback(args...)
 	} else {
 		fmt.Printf("Unknown command: %s. Type 'help' for a list of commands.\n", command)
 	}
 }
 
-func commandExit() error {
+func commandExit(args ...string) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp() error {
+func commandHelp(args ...string) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println("")
@@ -103,4 +98,16 @@ func commandHelp() error {
 		fmt.Printf("  %s: %s\n", cmd.name, cmd.description)
 	}
 	return nil
+}
+
+func commandMap(args ...string) error {
+	return pokeapiinteractions.Map()
+}
+
+func commandMapb(args ...string) error {
+	return pokeapiinteractions.Mapb()
+}
+
+func commandExplore(args ...string) error {
+	return pokeapiinteractions.Explore(args[0])
 }
