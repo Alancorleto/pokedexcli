@@ -56,6 +56,11 @@ func init() {
 			description: "Inspect a caught pokemon by name",
 			callback:    commandInspect,
 		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "List all caught pokemon",
+			callback:    commandPokedex,
+		},
 	}
 }
 
@@ -88,7 +93,10 @@ func cleanInput(text string) []string {
 
 func processCommand(command string, args ...string) {
 	if cmd, exists := commands[command]; exists {
-		cmd.callback(args...)
+		err := cmd.callback(args...)
+		if err != nil {
+			fmt.Printf("Error executing command %s: %v\n", command, err)
+		}
 	} else {
 		fmt.Printf("Unknown command: %s. Type 'help' for a list of commands.\n", command)
 	}
@@ -128,4 +136,8 @@ func commandCatch(args ...string) error {
 
 func commandInspect(args ...string) error {
 	return pokeapiinteractions.Inspect(args[0])
+}
+
+func commandPokedex(args ...string) error {
+	return pokeapiinteractions.Pokedex()
 }

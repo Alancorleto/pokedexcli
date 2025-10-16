@@ -69,3 +69,18 @@ func Inspect(pokemonName string) error {
 	}
 	return nil
 }
+
+func Pokedex() error {
+	if len(pokedex) == 0 {
+		fmt.Println("Your pokedex is empty. Catch some pokemon!")
+		return nil
+	}
+
+	fmt.Println("Your Pokedex:")
+
+	for name := range pokedex {
+		fmt.Printf("- %s\n", name)
+	}
+
+	return nil
+}
