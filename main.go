@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	pokeapiinteractions "github.com/alancorleto/pokedexcli/internal/poke_api_interactions"
+	pokecache "github.com/alancorleto/pokedexcli/internal/pokecache"
 )
 
 type cliCommand struct {
@@ -53,6 +55,8 @@ func init() {
 }
 
 func main() {
+	pokecache.NewCache(5 * time.Second)
+
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")

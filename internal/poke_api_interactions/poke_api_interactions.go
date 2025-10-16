@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	pokecache "github.com/alancorleto/pokedexcli/internal/pokecache"
 )
 
 func Get[T any](url string) (*T, error) {
@@ -22,6 +24,10 @@ func Get[T any](url string) (*T, error) {
 }
 
 func MakeGetRequest(url string) ([]byte, error) {
+	if cachedData, found := pokecache.Get(url); found {
+		return cachedData, nil
+	}
+
 	res, err := http.Get(url)
 	if err != nil {
 		return nil, err
@@ -35,6 +41,8 @@ func MakeGetRequest(url string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	pokecache.Add(url, body)
 
 	return body, nil
 }
